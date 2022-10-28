@@ -10,7 +10,7 @@ public class Course implements Serializable{
     private String teacher;
     private String classRoom;
 
-    private List<Object> participants;
+    private List<Student> participants;
 
     public Course(String courseName, String courseId, String teacher, String classRoom) {
         this.courseName = courseName;
@@ -56,7 +56,7 @@ public class Course implements Serializable{
         this.classRoom = classRoom;
     }
 
-    public List<Object> getParticipants() {
+    public List<Student> getParticipants() {
         return this.participants;
     }
 

@@ -9,13 +9,13 @@ document.getElementById("createStudentButton")
     e.preventDefault();
 
     //Create random studentId with rand();
-    let rand = Math.random().toString(16).substr(1, 4);
-
+    let rand = Math.random().toString(16).substr(2, 4);
+    let nameSplit = document.getElementById("name").value.split(' ');
     //Creating blog object from the form information
     let student = {
         name: document.getElementById("name").value,
         age: document.getElementById("age").value,
-        studentId: rand + document.getElementById("name").value,
+        studentId: rand + "-" + nameSplit[0],
         groupId: document.getElementById("groupId").value,
         email: document.getElementById("email").value,
         phonenumber: document.getElementById("phonenumber").value
@@ -32,27 +32,39 @@ document.getElementById("createStudentButton")
             method: "POST",
             body: JSON.stringify(student)
         })
-        .then(resp => {getStudents(); console.log(student)});
+        .then(response => response.text())
+        .then(data => alert(data))
+        .then(() => getStudents())
 })
 
 
 //Function for getting all the blogs
 function getStudents()
 {
-    //Empty the list in webpage
-    studentList.innerHTML = ""
-
-    //Fetch all the blogs from the server
+    //clears table except first row
+    var table = document.getElementById("studentTable");
+    table.getElementsByTagName("tbody")[0].innerHTML = table.rows[0].innerHTML;
+    //Fetch all the students from the server
     fetch("http://localhost:8080/students")
     .then(response => response.json())
     .then( data =>
     {
-        console.log(data);
-        //Create list item of each blog object
-        data.forEach(i => {
-            let li = document.createElement("li")
-            li.innerText ="Student name: " + i.name + ", StudentId: " + i.studentId;
-            studentList.appendChild(li)
-        })
+        const table = document.getElementById("studentTable");
+        
+        data.forEach(element => {
+        let row = table.insertRow();
+        let cell = row.insertCell();
+        cell.innerHTML = element.name;
+        cell = row.insertCell();
+        cell.innerHTML = element.age;
+        cell = row.insertCell();
+        cell.innerHTML = element.studentId;
+        cell = row.insertCell();
+        cell.innerHTML = element.groupId;
+        cell = row.insertCell();
+        cell.innerHTML = element.email;
+        cell = row.insertCell();
+        cell.innerHTML = element.phonenumber;
+        });
     })
 }
