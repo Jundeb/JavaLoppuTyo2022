@@ -38,7 +38,7 @@ document.getElementById("createStudentButton")
 })
 
 
-//Function for getting all the blogs
+//Function for getting all the students
 function getStudents()
 {
     //clears table except first row
