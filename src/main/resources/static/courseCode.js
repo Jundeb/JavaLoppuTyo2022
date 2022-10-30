@@ -63,7 +63,7 @@ document.getElementById("addStudentToCourseButton")
     })
 
 
-//Function for getting all the blogs
+//Function for getting all the courses
 function getCourses() 
 {
     //clears table except first row
