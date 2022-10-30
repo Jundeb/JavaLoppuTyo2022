@@ -27,8 +27,7 @@ public class StudentAndCourseController {
 
     @PostMapping("addcourse")
     public String addCourse(@RequestBody Course course){
-        service.addCourse(course);
-        return "Course created";
+        return service.addCourse(course);
     }
 
     @PostMapping("addstudent")
@@ -41,9 +40,7 @@ public class StudentAndCourseController {
         //tries to find attribute values for "studentId" and "courseId" from JSON
         String studentId = jsonMapping.get("studentId").toString();
         String courseId = jsonMapping.get("courseId").toString();
-        if(studentId == "" || courseId == ""){
-            return "StudentId and CourseId required";
-        }
+
         return service.addStudentToCourse(studentId, courseId);
     }
 }

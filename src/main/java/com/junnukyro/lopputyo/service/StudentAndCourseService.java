@@ -15,11 +15,12 @@ public class StudentAndCourseService {
     @Autowired
     FileService myFileService = new FileService();
 
-    // tehdään listoista public jotta niitä voidaan käyttää controllereissa
+    // when lists are public they can be used in controller directly
     public List<Course> courses = new ArrayList<>();
     public List<Student> students = new ArrayList<>();
 
     public StudentAndCourseService() {
+        // gets objects from files
         courses = myFileService.readCoursesFromFile();
         students = myFileService.readStudentsFromFile();
     }
@@ -27,53 +28,70 @@ public class StudentAndCourseService {
     // adds new course to courses list
     // and saves courses to a file
     public String addCourse(Course course) {
+
+        // if required information is given, create new course
+        if (course.getCourseName() == "" || course.getClassRoom() == "" || course.getTeacher() == "") {
+            return "Course name, teacher and classroom required.";
+        } else {
             courses.add(course);
             myFileService.writeCoursesToFile(courses);
             return "Course created successfully";
+        }
     }
 
     // adds new student to students list
     // and saves students to a file
     public String addStudent(Student student) {
-        //checks if email already exists
-        if(students.stream().anyMatch(o -> o.getEmail().equals(student.getEmail()))){
-            return "This email is already in use";
-        } 
-        //checks if email already exists
-        else if(students.stream().anyMatch(o -> o.getName().equals(student.getName()))){
-            return "This name is already in use";
-        }
-        //if both tests pass create new student
-        else {
-            students.add(student);
-            myFileService.writeStudentsToFile(students);
-            return "Student created successfully";
+
+        // if required information is given, create new student
+        if (student.getName() == "" || student.getAge() == 0 || student.getGroupId() == "" || student.getEmail() == ""
+                || student.getPhonenumber() == "") {
+            return "Student name, age, groupId, email and phonenumber required.";
+        } else {
+            // checks if email already exists
+            if (students.stream().anyMatch(o -> o.getEmail().equals(student.getEmail()))) {
+                return "This email is already in use";
+            }
+            // checks if email already exists
+            else if (students.stream().anyMatch(o -> o.getName().equals(student.getName()))) {
+                return "This name is already in use";
+            } else {
+                students.add(student);
+                myFileService.writeStudentsToFile(students);
+                return "Student created successfully";
+            }
         }
     }
 
     // if student and course exists, adds student to a course
-    // and saves courses to a file
+    // and saves courses list to file
     public String addStudentToCourse(String studentId, String courseId) {
-        for (Student student : students) {
-            if (student.getStudentId().equals(studentId)) {
-                for (Course course : courses) {
-                    if (course.getCourseId().equals(courseId)) {
-                        // if student is not in the course add it to the course
-                        if (!course.getParticipants().stream().anyMatch(o -> o.getStudentId().equals(studentId))) {
-                            course.addParticipants(student);
-                            myFileService.writeCoursesToFile(courses);
-                            return "Student added to course successfully";
+
+        // if either studentId or courseId is empty return text below
+        if (studentId == "" || courseId == "") {
+            return "StudentId and CourseId required";
+        } else {
+            for (Student student : students) {
+                if (student.getStudentId().equals(studentId)) {
+                    for (Course course : courses) {
+                        if (course.getCourseId().equals(courseId)) {
+                            // if student is not in the course add it to course
+                            if (!course.getParticipants().stream().anyMatch(o -> o.getStudentId().equals(studentId))) {
+                                course.addParticipants(student);
+                                myFileService.writeCoursesToFile(courses);
+                                return "Student added to course successfully";
+                            }
+                            // if student is already in course
+                            return "Student already in course";
                         }
-                        // if student is already in course
-                        return "Student already in course";
                     }
+                    // if course is not found
+                    return "Course not found";
                 }
-                // if course is not found
-                return "Course not found";
             }
+            // if student is not found
+            return "Student not found";
         }
-        //if stundet is not found
-        return "Student not found";
     }
 
 }
